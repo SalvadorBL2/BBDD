@@ -1,0 +1,19 @@
+DELIMITER $$
+USE practica $$
+DROP PROCEDURE IF EXISTS ejemplo10 $$
+CREATE PROCEDURE ejemplo10(param INT)
+BEGIN
+	CASE param
+		WHEN 1 THEN
+			INSERT INTO T VALUES ('primero');
+		WHEN 2 THEN
+			INSERT INTO T VALUES ('segundo');
+		WHEN 3 THEN
+			INSERT INTO T VALUES ('tercero');
+		ELSE
+			INSERT INTO T VALUES ('otro');
+	END CASE;
+END; $$
+DELIMITER ;
+
+

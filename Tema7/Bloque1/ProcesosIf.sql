@@ -1,0 +1,12 @@
+DELIMITER $$
+USE prueba $$
+DROP PROCEDURE PracticaIf $$
+CREATE PROCEDURE PracticaIf(letra CHAR(1))
+BEGIN
+	IF letra = 'a'	THEN
+			SELECT 'HOLA';
+		ELSE
+			SELECT 'ADIOS';
+	END IF;
+END; $$
+DELIMITER ;

@@ -1,0 +1,31 @@
+-- Usa las estructuras condicionales para mostrar el día de la semana según un valor de entrada numérico, 1 para domingo, 2 lunes, etc.
+
+USE practica;
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS diaSemana $$
+CREATE PROCEDURE diaSemana(num INT)
+
+BEGIN
+	CASE num
+		WHEN 1 THEN 
+			SELECT 'DOMINGO' AS DIA_DE_LA_SEMANA;
+		WHEN 2 THEN 
+			SELECT 'LUNES' AS DIA_DE_LA_SEMANA;
+		WHEN 3 THEN 
+			SELECT 'MARTES' AS DIA_DE_LA_SEMANA;
+		WHEN 4 THEN 
+			SELECT 'MIÉRCOLES' AS DIA_DE_LA_SEMANA;
+		WHEN 5 THEN 
+			SELECT 'JUEVES' AS DIA_DE_LA_SEMANA;
+		WHEN 6 THEN 
+			SELECT 'VIERNES' AS DIA_DE_LA_SEMANA;
+		WHEN 7 THEN 
+			SELECT 'SABADO' AS DIA_DE_LA_SEMANA;
+		ELSE
+			SELECT 'DEBES INTRODUCIR UN NÚMERO DEL 1 AL 7, AMBOS INCLUSIVE.' AS ERROR;
+	END CASE;
+END; $$
+
+DELIMITER ;
+
