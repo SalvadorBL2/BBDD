@@ -124,21 +124,6 @@ INSERT INTO Registra VALUES
 (5, 2, 12, 'Internet'),
 (2, 4, 15, 'Internet');
 
-SELECT 'Fabricante' AS NOMBRE_TABLA;
-DESCRIBE Fabricante;
-SELECT 'Cliente' AS NOMBRE_TABLA;
-DESCRIBE Cliente;
-SELECT 'Comercio' AS NOMBRE_TABLA;
-DESCRIBE Comercio;
-SELECT 'Programa' AS NOMBRE_TABLA;
-DESCRIBE Programa;
-SELECT 'Desarrolla' AS NOMBRE_TABLA;
-DESCRIBE Desarrolla;
-SELECT 'Distribuye' AS NOMBRE_TABLA;
-DESCRIBE Distribuye;
-SELECT 'Registra' AS NOMBRE_TABLA;
-DESCRIBE Registra;
-
 
 
 
