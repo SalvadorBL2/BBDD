@@ -613,61 +613,235 @@ JOIN Comercio ON Registra.idComercio = Comercio.idComercio;
 | Juan González  | Paradox            | Internet       | Centro Mail     |
 +----------------+--------------------+----------------+-----------------+
 
-
-/*------------------ HASTA AQUI ESTAN COMPROBADAS LAS CONSULTAS ---------------------*/
-
-
 -- 39 Genera un listado con las ciudades en las que se pueden obtener los productos de Oracle.
+
+SELECT DISTINCT ciudad
+FROM Comercio c/* <-- DE ESTA FORMA PODEMOS ACORTAR LAS CONSULTAS Y HACERLAS MAS LEGIBLES */
+JOIN Distribuye d ON c.idComercio = d.idComercio
+JOIN Programa p ON d.idPrograma = p.idPrograma
+JOIN Desarrolla ds ON p.idPrograma = ds.idPrograma
+JOIN Fabricante f ON ds.idFabricante = f.idFabricante
+WHERE f.nombre = 'Oracle';
++---------+
+| ciudad  |
++---------+
+| Sevilla |
+| Madrid  |
++---------+
+
 -- 40 Obtén el nombre de los usuarios que han registrado Access XP.
+/* FUNCIONAN LAS DOS CONSULTAS, SOLO QUE DE LA PRIMERA NO HAY NADIE QUE CUMPLA LOS REQUISITOS DE NOMBRE Y VERSION */
+SELECT DISTINCT c.nombre
+FROM Cliente c
+JOIN Registra r ON c.dni = r.dni
+JOIN Programa p ON r.idPrograma = p.idPrograma
+WHERE p.nombre = 'Access' AND p.version = 'XP';
+Empty set (0,00 sec)
+
+SELECT DISTINCT c.nombre
+FROM Cliente c
+JOIN Registra r ON c.dni = r.dni
+JOIN Programa p ON r.idPrograma = p.idPrograma
+WHERE p.nombre = 'Windows' AND p.version = 'XP Professional';
++---------------+
+| nombre        |
++---------------+
+| Javier Casado |
++---------------+
+
 -- 41 Nombre de aquellos fabricantes cuyo país es el mismo que ʻOracleʼ.
+
+SELECT nombre
+FROM Fabricante
+WHERE pais = (
+	SELECT pais
+	FROM Fabricante
+	WHERE nombre = 'Oracle'
+	);
++-----------+
+| nombre    |
++-----------+
+| Oracle    |
+| Microsoft |
+| IBM       |
+| Borland   |
+| Symantec  |
++-----------+
+
 -- 42 Nombre de aquellos clientes que tienen la misma edad que Pepe Pérez.
+
+SELECT nombre
+FROM Cliente	/*NOMBRE <> PEPE, PARA PODER EXCLUIR SU NOMBRE*/
+WHERE nombre <> 'Pepe Pérez' AND edad = (
+	SELECT edad
+	FROM Cliente
+	WHERE nombre = 'Pepe Pérez' 
+	);
++----------------+
+| nombre         |
++----------------+
+| Juan González  |
++----------------+
+
 -- 43 Genera un listado con los comercios que tienen su sede en la misma ciudad que tiene el comercio ʻFNACʼ.
+
+SELECT *
+FROM Comercio
+WHERE nombre <> 'FNAC' AND ciudad = (
+	SELECT ciudad
+	FROM Comercio
+	WHERE nombre = 'FNAC'
+	);
+Empty set (0,00 sec)
+
+/* LA MISMA CONSULTA, SOLO QUE UNA ESTA VACIA Y LA OTRA DEVUELVE EL COMERCIO QUE TIENE LA MISMA CIUDAD QUE CENTRO MAIL, EXCLUYENDO AL MISMO. */
+
+SELECT *
+FROM Comercio
+WHERE nombre <> 'Centro Mail' AND ciudad = (
+	SELECT ciudad
+	FROM Comercio
+	WHERE nombre = 'Centro Mail'
+	);
++------------+-----------------+---------+
+| idComercio | nombre          | ciudad  |
++------------+-----------------+---------+
+|          1 | El Corte Ingles | Sevilla |
++------------+-----------------+---------+
+
 -- 44 Nombre de aquellos clientes que han registrado un producto de la misma forma que el cliente ʻPepe Pérezʼ.
+
+SELECT c.nombre
+FROM Cliente c
+JOIN Registra r ON c.dni = r.dni
+WHERE nombre <> 'Pepe Pérez' AND medio IN (
+	SELECT medio
+	FROM Registra r
+	JOIN Cliente c ON r.dni = c.dni
+	WHERE c.nombre = 'Pepe Pérez'
+	);
++----------------+
+| nombre         |
++----------------+
+| Juan González  |
+| Javier Casado  |
+| Nuria Sánchez  |
++----------------+
+
 -- 45 Obtener el número de programas que hay en la tabla programas.
+
+SELECT COUNT(idPrograma) AS PROGRAMAS_TOTALES
+FROM Programa;
++-------------------+
+| PROGRAMAS_TOTALES |
++-------------------+
+|                20 |
++-------------------+
+
 -- 46 Calcula el número de clientes cuya edad es mayor de 40 años.
+
+SELECT COUNT(dni) AS CLIENTES_TOTALES
+FROM Cliente
+WHERE edad > 40;
++------------------+
+| CLIENTES_TOTALES |
++------------------+
+|                3 |
++------------------+
+
 -- 47 Calcula el número de productos que ha vendido el establecimiento cuyo CIF es 1.
+
+SELECT COUNT(idPrograma) AS PROGRAMAS_VENDIDOS_ID_1
+FROM Registra
+WHERE idComercio = 1;
++-------------------------+
+| PROGRAMAS_VENDIDOS_ID_1 |
++-------------------------+
+|                       2 |
++-------------------------+
+
 -- 48 Calcula la media de programas que se venden cuyo código es 7.
+
+SELECT AVG(idPrograma) AS MEDIA_VENTAS_ID_7
+FROM Registra
+WHERE idPrograma = 7;
+/* DEVUELVE NULL PORQUE LA FUNCION INTENTA HACER LA MEDIA DE ALGO QUE NO HA PODIDO ENCONTRAR (UN PROGRAMA EN REGISTRA CON ID_7). AL NO ENCONTRARLO MUESTRA NULL. */
++-------------------+
+| MEDIA_VENTAS_ID_7 |
++-------------------+
+|              NULL |
++-------------------+
+
 -- 49 Calcula la mínima cantidad de programas de código 7 que se ha vendido
+
+SELECT MIN(idPrograma) AS CANTIDAD_MIN_ID_7
+FROM Registra
+WHERE idPrograma = 7;
+/* AQUI TENEMOS EL MISMO EJEMPLO QUE EN EL EJERCICIO ANTERIOR */
++-------------------+
+| CANTIDAD_MIN_ID_7 |
++-------------------+
+|              NULL |
++-------------------+
+
+
 -- 50 Calcula la máxima cantidad de programas de código 7 que se ha vendido.
+
+SELECT MAX(idPrograma) AS CANTIDAD_MAX_ID_7
+FROM Registra
+WHERE idPrograma = 7;
++-------------------+
+| CANTIDAD_MAX_ID_7 |
++-------------------+
+|              NULL |
++-------------------+
+
 -- 51 ¿En cuántos establecimientos se vende el programa cuyo código es 7?
+
+SELECT c.*
+FROM Comercio c
+JOIN Distribuye d ON c.idComercio = d.idComercio
+WHERE idPrograma = 7;
++------------+-----------------+---------+
+| idComercio | nombre          | ciudad  |
++------------+-----------------+---------+
+|          1 | El Corte Ingles | Sevilla |
+|          2 | El Corte Ingles | Madrid  |
++------------+-----------------+---------+
+
 -- 52 Calcular el número de registros que se han realizado por Internet.
+
+SELECT COUNT(idPrograma) AS REGISTROS_TOTALES_INTERNET
+FROM Registra
+WHERE medio = 'Internet';
++----------------------------+
+| REGISTROS_TOTALES_INTERNET |
++----------------------------+
+|                          3 |
++----------------------------+
+
+
 -- 53 Obtener el número total de programas que se han vendido en ʻSevillaʼ.
+
+SELECT COUNT(r.idPrograma) AS TOTAL_PROGRAMAS_VENDIDOS_SEVILLA
+FROM Registra r
+JOIN Comercio c ON r.idComercio = c.idComercio
+WHERE ciudad = 'Sevilla';
++----------------------------------+
+| TOTAL_PROGRAMAS_VENDIDOS_SEVILLA |
++----------------------------------+
+|                                3 |
++----------------------------------+
+
 -- 54 Calcular el número total de programas que han desarrollado los fabricantes cuyo país es ʻEstados Unidosʼ.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT COUNT(d.idPrograma) AS TOTAL_PROGRAMAS_DESARROLLADOS_EEUU
+FROM Desarrolla d
+JOIN Fabricante f ON d.idFabricante = f.idFabricante
+WHERE pais = 'Estados Unidos';
++------------------------------------+
+| TOTAL_PROGRAMAS_DESARROLLADOS_EEUU |
++------------------------------------+
+|                                 18 |
++------------------------------------+
 
